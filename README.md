@@ -1,6 +1,8 @@
 # Anime-Llasa-webui
 VRAM 8 GB で Anime Llasa を動作させる webui
 
+![](https://github.com/dskjal/Anime-Llasa-webui/blob/main/images/ui.jpg)
+
 # インストール
 
 ## 必要なもの
