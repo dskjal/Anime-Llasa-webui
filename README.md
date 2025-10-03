@@ -25,6 +25,15 @@ Anime-Llasa-webui ディレクトリで
 
 **初回起動時は HKUSTAudio/xcodec2 のダウンロードがあるので遅い。**
 
+# 使い方
+**音声ファイルの続きを生成する機能は、実装してありますが正しく機能しません**。
+
+**よく生成に失敗します。何度か生成してみてください**。
+
+Generate forever にチェックを入れて、Generate を押すと無限生成します。停止するには、Generate forever のチェックを外して、現在生成中の音声が生成されるまで待ってください。
+
+System prompt を変更した学習はされていないので、System prompt を変更しても意味はありません。
+
 # トラブルシューティング
 ## xcodec2 の動作検証
 tests フォルダで powershell を開き以下のコマンドを実行。reconstructed.wav が作成され、正常に再生されることを確認する。
