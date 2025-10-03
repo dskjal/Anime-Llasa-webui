@@ -48,6 +48,16 @@ tests フォルダで powershell を開き、Anime-Llasa-webui/models に Anime-
 > ..\venv\Scripts\activate  
 > python .\test_llm.py
 
+# 動作について
+
+[HKUSTAudio/xcodec2](https://huggingface.co/HKUSTAudio/xcodec2) は音声ファイルを 0～65535 の整数の配列にエンコード、整数の配列から音声ファイルへデコードするモデル。
+
+[HKUSTAudio/Llasa-3B](https://huggingface.co/HKUSTAudio/Llasa-3B) は Llama 3.2 を、テキストから XCodec2 がデコード可能な数値の配列を出力するようにファインチューンしたもの。
+
+[NandemoGHS/Anime-Llasa-3B](https://huggingface.co/NandemoGHS/Anime-Llasa-3B) は英語と中国語とにしか対応していない Llasa-3B を日本語に対応するように追加学習したもの。
+
+[mradermacher/Anime-Llasa-3B-GGUF](https://huggingface.co/mradermacher/Anime-Llasa-3B-GGUF) は Anime-Llasa-3B の量子化モデル。
+
 # 関連リポジトリ
 - [HKUSTAudio/xcodec2](https://huggingface.co/HKUSTAudio/xcodec2)
 - [HKUSTAudio/Llasa-3B](https://huggingface.co/HKUSTAudio/Llasa-3B)
