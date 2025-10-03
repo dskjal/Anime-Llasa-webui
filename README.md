@@ -34,6 +34,8 @@ Generate forever にチェックを入れて、Generate を押すと無限生成
 
 System prompt を変更した学習はされていないので、System prompt を変更しても意味はありません。
 
+safetensor モデルの読み込みは対応していません。
+
 # トラブルシューティング
 ## xcodec2 の動作検証
 tests フォルダで powershell を開き以下のコマンドを実行。reconstructed.wav が作成され、正常に再生されることを確認する。
