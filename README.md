@@ -7,6 +7,7 @@ VRAM 8 GB で Anime Llasa を動作させる webui
 - git
 - python 3.11
 - [Microsoft Visual C++ 2015-2022 Redistributable](https://learn.microsoft.com/ja-jp/cpp/windows/latest-supported-vc-redist?view=msvc-170)
+- [Anime-Llasa-3B.Q4_K_M.gguf](https://huggingface.co/mradermacher/Anime-Llasa-3B-GGUF/blob/main/Anime-Llasa-3B.Q4_K_M.gguf)
 
 ## コマンド
 > git clone https://github.com/dskjal/Anime-Llasa-webui  
@@ -14,6 +15,13 @@ VRAM 8 GB で Anime Llasa を動作させる webui
 > python -m venv venv  
 > ./venv/Scripts/activate
 > pip install -r requirements.txt
+
+Anime-Llasa-webui/models に [Anime-Llasa-3B.Q4_K_M.gguf](https://huggingface.co/mradermacher/Anime-Llasa-3B-GGUF/blob/main/Anime-Llasa-3B.Q4_K_M.gguf) を配置。
+
+# 起動
+Anime-Llasa-webui ディレクトリで
+> ./venv/Scripts/activate
+> python ./run.py
 
 
 # トラブルシューティング
