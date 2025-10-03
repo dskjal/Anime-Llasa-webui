@@ -62,7 +62,7 @@ tests フォルダで powershell を開き、Anime-Llasa-webui/models に Anime-
 
 [mradermacher/Anime-Llasa-3B-GGUF](https://huggingface.co/mradermacher/Anime-Llasa-3B-GGUF) は Anime-Llasa-3B の量子化モデル。
 
-生成にかかる時間の 99% が Llasa のトークン生成なので、Llama 3.2 が高速に動作するハードウェアや最適化を行うと動作が高速になる。
+生成にかかる時間の 99% が Llasa のトークン生成なので、Llama 3.2 が高速に動作するハードウェアを使うか、Llama 3.2 に適用可能な最適化を行うと動作が高速になる。
 
 # 関連リポジトリ
 - [HKUSTAudio/xcodec2](https://huggingface.co/HKUSTAudio/xcodec2)
