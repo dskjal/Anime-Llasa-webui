@@ -73,6 +73,10 @@ tests フォルダで powershell を開き、Anime-Llasa-webui/models に Anime-
 
 生成にかかる時間の 99% が Llasa のトークン生成なので、Llama 3.2 が高速に動作するハードウェアを使うか、Llama 3.2 に適用可能な最適化を行うと動作が高速になる。
 
+# LoRA
+
+LoRA の作成方法は [zhenye234/LLaSA_training](https://github.com/zhenye234/LLaSA_training/tree/main) を参照。
+
 # 関連リポジトリ
 - [HKUSTAudio/xcodec2](https://huggingface.co/HKUSTAudio/xcodec2)
 - [HKUSTAudio/Llasa-3B](https://huggingface.co/HKUSTAudio/Llasa-3B)
