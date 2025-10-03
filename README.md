@@ -1,2 +1,31 @@
 # Anime-Llasa-webui
 VRAM 8 GB で Anime Llasa を動作させる webui
+
+# インストール
+
+## 必要なもの
+- git
+- python 3.11
+- [Microsoft Visual C++ 2015-2022 Redistributable](https://learn.microsoft.com/ja-jp/cpp/windows/latest-supported-vc-redist?view=msvc-170)
+
+## コマンド
+> git clone https://github.com/dskjal/Anime-Llasa-webui  
+> cd Anime-Llasa-webui  
+> python -m venv venv  
+> ./venv/Scripts/activate
+> pip install -r requirements.txt
+
+
+# トラブルシューティング
+## xcodec2 の動作検証
+tests フォルダで powershell を開き以下のコマンドを実行。reconstructed.wav が作成され、正常に再生されることを確認する。
+
+> ..\venv\Scripts\activate
+> python .\test_xcodec2.py
+
+
+## llm の動作検証
+tests フォルダで powershell を開き、Anime-Llasa-webui/models に Anime-Llasa-3B.Q4_K_M.gguf があることを確認する。以下のコマンドを実行し、0～65536 の数値が大量に出力されると成功。
+
+..\venv\Scripts\activate
+python .\test_llm.py
