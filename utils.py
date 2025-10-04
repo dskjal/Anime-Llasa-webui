@@ -172,9 +172,6 @@ class App:
                 if token == SPEECH_GENERATION_END:
                     print("\n[EOS token detected]")
                     break
-                elif token == END_OF_TEXT:
-                    print("\n[end_of_text token detected]")
-                    break
 
                 # トークン追加
                 self.llm.eval([token])
