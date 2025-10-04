@@ -95,7 +95,7 @@ class App:
                 # audio_token_cache は t2token で管理
                 print(f"Audio to tokens : {time.time()-old_time:.1f} sec")
         else:
-            audio_tokens = self.audio_token_cache = np.empty(0)
+            audio_tokens = np.empty(0)
 
         while True:
             old_time = time.time()
@@ -142,7 +142,7 @@ class App:
                 # use cache
                 print("Use prompt cache")
             else:
-                # <|begin_of_text|><|start_header_id|>user<|end_header_id|>user content<|eot_id|><|start_header_id|>assistant<|end_header_id|>assistant content<|eot|>
+                # <|begin_of_text|><|start_header_id|>user<|end_header_id|>user content<|eot_id|><|start_header_id|>assistant<|end_header_id|>assistant content
                 prompt_tokens = []
                 # prompt_tokens.append(BEGIN_OF_TEXT)
 
@@ -158,10 +158,13 @@ class App:
                 # prompt_tokens.append(START_HEADER_ID)
                 # prompt_tokens.extend(self.llm.tokenize("assistant".encode('utf-8')))
                 # prompt_tokens.append(END_HEADER_ID)
+                # prompt_tokens.extend(self.llm.tokenize("\n\n".encode('utf-8')))
                 prompt_tokens.append(SPEECH_GENERATION_START)
 
                 if len(audio_tokens) > 0:
                     prompt_tokens.extend(audio_tokens.tolist())
+                else:
+                    self.audio_token_cache = np.empty(0)
 
                 self.t2s_text_cache = t2s_text
                 self.system_prompt_cache = system_prompt
