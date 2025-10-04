@@ -7,15 +7,11 @@ import os
 from xcodec2.modeling_xcodec2 import XCodec2Model
 
 # トークンマップは https://huggingface.co/HKUSTAudio/Llasa-3B/blob/main/tokenizer.json を参照
+TOKEN_OFFSET = 128264
 TEXT_UNDERSTANDING_START = 128258
 TEXT_UNDERSTANDING_END = 128259
 SPEECH_GENERATION_START = 128260
 SPEECH_GENERATION_END = 128261
-BEGIN_OF_TEXT = 128000
-END_OF_TEXT = 128001
-EOT_ID = 128009
-START_HEADER_ID = 128006
-END_HEADER_ID = 128007
 MAX_CONTEXT_SIZE = 4096
 
 TARGET_SR = 16000   # xcodec2 の動作周波数
@@ -142,27 +138,15 @@ class App:
                 # use cache
                 print("Use prompt cache")
             else:
-                # <|begin_of_text|><|start_header_id|>user<|end_header_id|>user content<|eot_id|><|start_header_id|>assistant<|end_header_id|>assistant content
                 prompt_tokens = []
-                # prompt_tokens.append(BEGIN_OF_TEXT)
-
-                # prompt_tokens.append(START_HEADER_ID)
-                # prompt_tokens.extend(self.llm.tokenize("user".encode('utf-8')))
-                # prompt_tokens.append(END_HEADER_ID)
                 prompt_tokens.extend(self.llm.tokenize(system_prompt.encode('utf-8')))
                 prompt_tokens.append(TEXT_UNDERSTANDING_START)
                 prompt_tokens.extend(self.llm.tokenize(t2s_text.encode('utf-8')))
                 prompt_tokens.append(TEXT_UNDERSTANDING_END)
-                # prompt_tokens.append(EOT_ID)
-
-                # prompt_tokens.append(START_HEADER_ID)
-                # prompt_tokens.extend(self.llm.tokenize("assistant".encode('utf-8')))
-                # prompt_tokens.append(END_HEADER_ID)
-                # prompt_tokens.extend(self.llm.tokenize("\n\n".encode('utf-8')))
                 prompt_tokens.append(SPEECH_GENERATION_START)
 
                 if len(audio_tokens) > 0:
-                    prompt_tokens.extend(audio_tokens.tolist())
+                    prompt_tokens.extend([token+TOKEN_OFFSET for token in audio_tokens.tolist()])
                 self.audio_token_cache = audio_tokens
 
                 self.t2s_text_cache = t2s_text
@@ -172,7 +156,7 @@ class App:
 
             self.llm.eval(prompt_tokens)
 
-            generated_tokens = audio_tokens.tolist()
+            generated_tokens = []#audio_tokens.tolist()
             for i in range(max_tokens):
                 token = self.llm.sample(
                     top_k=top_k,
@@ -181,7 +165,6 @@ class App:
                     repeat_penalty=repeat_penalty,
                 )
 
-                TOKEN_OFFSET = 128264
                 if token >= TOKEN_OFFSET:
                     generated_tokens.append(token-TOKEN_OFFSET)
 
