@@ -163,8 +163,7 @@ class App:
 
                 if len(audio_tokens) > 0:
                     prompt_tokens.extend(audio_tokens.tolist())
-                else:
-                    self.audio_token_cache = np.empty(0)
+                self.audio_token_cache = audio_tokens
 
                 self.t2s_text_cache = t2s_text
                 self.system_prompt_cache = system_prompt
