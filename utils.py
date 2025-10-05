@@ -4,6 +4,7 @@ import soundfile as sf
 import librosa
 import numpy as np
 import os
+import time
 from xcodec2.modeling_xcodec2 import XCodec2Model
 
 # トークンマップは https://huggingface.co/HKUSTAudio/Llasa-3B/blob/main/tokenizer.json を参照
@@ -31,8 +32,24 @@ class App:
         self.prompt_cache = []
 
         model_path = "HKUSTAudio/xcodec2"
+        old_time = time.time()
         self.Codec_model = XCodec2Model.from_pretrained(model_path)
         self.Codec_model.eval()
+        print(f"XCodec2 load time : {time.time()-old_time:.1f} sec")
+
+
+    def do_load_llm(self, path:str) -> None:
+        old_time = time.time()
+        self.llm = Llama(
+            model_path=path,
+            n_gpu_layers=self.n_gpu_layers,
+            n_ctx=MAX_CONTEXT_SIZE,
+            flash_attn=True,
+            verbose=False,
+        )
+        self.llm_path = path
+        self.prompt_cache = []
+        print(f"{path} loaded. Load time : {time.time()-old_time:.1f} sec")
 
     def load_llm(self, path:str="./models/Anime-Llasa-3B.Q4_K_M.gguf"):
         if not os.path.isfile(path=path):
@@ -42,15 +59,7 @@ class App:
             self.unload_llm()
 
         try:
-            self.llm = Llama(
-                model_path=path,
-                n_gpu_layers=self.n_gpu_layers,
-                n_ctx=MAX_CONTEXT_SIZE,
-                verbose=False,
-            )
-            self.llm_path = path
-            self.prompt_cache = []
-            print(f"{path} loaded.")
+            self.do_load_llm(path)
             return
         except Exception as e:
             print(f"Failed to load llm: {e}")
@@ -59,15 +68,7 @@ class App:
         self.Codec_model.to(cpu_device)
         torch.cuda.empty_cache()
         try:
-            self.llm = Llama(
-                model_path=path,
-                n_gpu_layers=self.n_gpu_layers,
-                n_ctx=MAX_CONTEXT_SIZE,
-                verbose=False,
-            )
-            self.llm_path = path
-            self.prompt_cache = []
-            print(f"{path} loaded.")
+            self.do_load_llm(path)
         except Exception as e:
             print(f"XCodec2 offloaded. But failed to load llm: {e}")
 
@@ -81,7 +82,6 @@ class App:
         self.is_persistent_generation = is_persistent
         
     def t2speech(self, t2s_text:str, system_prompt:str="Convert the text to speech:", max_tokens:int=2048, top_k:int=0, top_p:float=0.95, temperature:float=0.9, repeat_penalty:float=1.1, output_folder_name="", audio_file_name:str="") -> str:
-        import time
         audio_tokens = self.audio_token_cache
         if audio_file_name:
             if audio_file_name != self.audio_file_name_cache:
@@ -162,7 +162,7 @@ class App:
                     top_k=top_k,
                     top_p=top_p,
                     temp=temperature,
-                    repeat_penalty=repeat_penalty,
+                    repeat_penalty=repeat_penalty
                 )
 
                 if token >= TOKEN_OFFSET:
