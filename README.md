@@ -47,6 +47,18 @@ safetensor モデルの読み込みは対応していません。
 音声ファイルの音声が「こんにちは」の場合、Text to Speech に「こんにちは『続きの文章』」を入力する。
 
 # トラブルシューティング
+## 音声ファイルを入力すると生成時にエラーになる
+以下のエラーは XCodec2 がエンコードに失敗したときに出る。環境音・吐息・笑い声のような音声化しづらい音がファイルの前後に入っていると失敗しやすい。
+
+<pre>
+einx.expr.stage3.SolveValueException: Failed to solve values of expressions. Axis 'n' has value 0 <= 0
+Input:
+    'q [c] d = 1 65536 8'
+    'b n q = 1 0 1'
+    'q b n d = None'
+    '1 = 1'
+</pre>
+
 ## xcodec2 の動作検証
 tests フォルダで powershell を開き以下のコマンドを実行。reconstructed.wav が作成され、正常に再生されることを確認する。
 
