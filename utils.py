@@ -1,4 +1,4 @@
-from llama_cpp import Llama 
+from llama_cpp import Llama
 import torch
 import soundfile as sf
 import librosa
@@ -35,6 +35,17 @@ class App:
         old_time = time.time()
         self.Codec_model = XCodec2Model.from_pretrained(model_path)
         self.Codec_model.eval()
+
+        # fp16 に変換
+        self.Codec_model = self.Codec_model.half()
+        # 2. LayerNorm モジュールを特定し、FP32 に戻す
+        def cast_ln_to_fp32(m):
+            # PyTorchの LayerNorm のインスタンスであれば
+            if isinstance(m, torch.nn.LayerNorm):
+                m.float() # LayerNorm の重みを FP32 にキャスト
+                
+        # モデル全体に適用
+        self.Codec_model.apply(cast_ln_to_fp32)
         print(f"XCodec2 load time : {time.time()-old_time:.1f} sec")
 
 
@@ -45,6 +56,8 @@ class App:
             n_gpu_layers=self.n_gpu_layers,
             n_ctx=MAX_CONTEXT_SIZE,
             flash_attn=True,
+            # type_k=8,   # GGML_TYPE_Q8_0
+            # type_v=8,   # GGML_TYPE_Q8_0
             verbose=False,
         )
         self.llm_path = path
@@ -182,7 +195,7 @@ class App:
             # VRAM check
             free, total = torch.cuda.mem_get_info(cuda_device)
             free_vram_GiB = free/1024**3
-            if free_vram_GiB <= 3.5:
+            if free_vram_GiB <= 2   :    # fp32 の場合は 3.5
                 self.unload_llm()
 
             self.Codec_model.to(cuda_device)
@@ -194,13 +207,18 @@ class App:
         self.load_xcode2()
         wav, _ = librosa.load(audio_file, sr=TARGET_SR)
         wav_tensor = torch.from_numpy(wav).float().unsqueeze(0) # Shape: (1, T)
-        return self.Codec_model.encode_code(input_waveform=wav_tensor).cpu()[0, 0, :].numpy()
+
+        with torch.no_grad():
+            with torch.autocast(device_type="cuda", dtype=torch.float16):
+                return self.Codec_model.encode_code(input_waveform=wav_tensor).cpu()[0, 0, :].numpy()
         
     def token2speech(self, tokens:list, output_folder_name:str="") -> str:
         self.load_xcode2()
 
-        speech_tokens = torch.tensor(tokens, device=cuda_device).unsqueeze(0).unsqueeze(0)
-        gen_wav = self.Codec_model.decode_code(speech_tokens)
+        with torch.no_grad():
+            with torch.autocast(device_type="cuda", dtype=torch.float16):
+                speech_tokens = torch.tensor(tokens, device=cuda_device).unsqueeze(0).unsqueeze(0)
+                gen_wav = self.Codec_model.decode_code(speech_tokens)
 
         if output_folder_name:
             if not os.path.isdir(f"./outputs/{output_folder_name}"):
