@@ -3,7 +3,7 @@ xcodec2==0.1.5
 soundfile==0.13.1
 librosa==0.11.0
 gradio==5.48.0
-transformers==4.45.2
+transformers==4.48.0
 llama-cpp-python==0.3.4
 torch==2.5.0+cu124
 torchaudio==2.5.0+cu124
