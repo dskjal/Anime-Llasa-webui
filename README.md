@@ -94,6 +94,7 @@ LoRA の作成方法は [zhenye234/LLaSA_training](https://github.com/zhenye234/
 
 # 関連リポジトリ
 - [HKUSTAudio/xcodec2](https://huggingface.co/HKUSTAudio/xcodec2)
+- [NandemoGHS/Anime-XCodec2-44.1kHz](https://huggingface.co/NandemoGHS/Anime-XCodec2-44.1kHz)
 - [HKUSTAudio/Llasa-3B](https://huggingface.co/HKUSTAudio/Llasa-3B)
 - [NandemoGHS/Anime-Llasa-3B](https://huggingface.co/NandemoGHS/Anime-Llasa-3B)
 - [mradermacher/Anime-Llasa-3B-GGUF](https://huggingface.co/mradermacher/Anime-Llasa-3B-GGUF)
