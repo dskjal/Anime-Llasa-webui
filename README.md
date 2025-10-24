@@ -16,7 +16,7 @@ VRAM 8 GB で Anime Llasa を動作させる webui。XCodec2 を fp16 で動作�
 > cd Anime-Llasa-webui  
 > python -m venv venv  
 > ./venv/Scripts/activate  
-> pip install -r requirements.txt
+> pip install -r requirements.txt  
 > pip install https://huggingface.co/NandemoGHS/Anime-XCodec2-44.1kHz/resolve/main/xcodec2-0.1.6.tar.gz
 
 
