@@ -15,7 +15,14 @@ SPEECH_GENERATION_START = 128260
 SPEECH_GENERATION_END = 128261
 MAX_CONTEXT_SIZE = 4096
 
-TARGET_SR = 16000   # xcodec2 の動作周波数
+USE_44KHZ = True
+XCODEC2_MODEL = "HKUSTAudio/xcodec2"
+ENCODER_SR = 16000   # xcodec2 の動作周波数
+DECODER_SR = ENCODER_SR
+if USE_44KHZ:
+    XCODEC2_MODEL = "NandemoGHS/Anime-XCodec2-44.1kHz"
+    DECODER_SR = 44100
+
 cpu_device = torch.device("cpu")
 cuda_device = torch.device("cuda:0") if torch.cuda.is_available() else cpu_device
 
@@ -31,14 +38,13 @@ class App:
         self.audio_token_cache = np.empty(0)
         self.prompt_cache = []
 
-        model_path = "HKUSTAudio/xcodec2"
         old_time = time.time()
-        self.Codec_model = XCodec2Model.from_pretrained(model_path)
+        self.Codec_model = XCodec2Model.from_pretrained(XCODEC2_MODEL)
         self.Codec_model.eval()
 
         # fp16 に変換
         self.Codec_model = self.Codec_model.half()
-        # 2. LayerNorm モジュールを特定し、FP32 に戻す
+        # LayerNorm モジュールを特定し、FP32 に戻す
         def cast_ln_to_fp32(m):
             # PyTorchの LayerNorm のインスタンスであれば
             if isinstance(m, torch.nn.LayerNorm):
@@ -177,14 +183,13 @@ class App:
                     temp=temperature,
                     repeat_penalty=repeat_penalty
                 )
-
-                if token >= TOKEN_OFFSET:
-                    generated_tokens.append(token-TOKEN_OFFSET)
-
                 # 停止条件
                 if token == SPEECH_GENERATION_END:
                     print("\n[EOS token detected]")
                     break
+
+                if token >= TOKEN_OFFSET:
+                    generated_tokens.append(token-TOKEN_OFFSET)
 
                 # トークン追加
                 self.llm.eval([token])
@@ -205,7 +210,7 @@ class App:
             raise FileNotFoundError(audio_file)
         
         self.load_xcode2()
-        wav, _ = librosa.load(audio_file, sr=TARGET_SR)
+        wav, _ = librosa.load(audio_file, sr=ENCODER_SR)
         wav_tensor = torch.from_numpy(wav).float().unsqueeze(0) # Shape: (1, T)
 
         with torch.no_grad():
@@ -228,7 +233,7 @@ class App:
         import datetime
         filename = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         output_file = f"./outputs/{output_folder_name}{filename}.wav"
-        sf.write(output_file, gen_wav[0, 0, :].cpu().numpy(), TARGET_SR)
+        sf.write(output_file, gen_wav[0, 0, :].cpu().numpy(), DECODER_SR)
         # with open(f"./outputs/{filename}.txt", "w", encoding="utf-8") as f:
         #     f.write(','.join([str(i) for i in tokens]))
         return output_file
