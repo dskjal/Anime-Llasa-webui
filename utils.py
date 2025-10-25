@@ -70,7 +70,7 @@ class App:
         self.prompt_cache = []
         print(f"{path} loaded. Load time : {time.time()-old_time:.1f} sec")
 
-    def load_llm(self, path:str="./models/Anime-Llasa-3B.Q4_K_M.gguf"):
+    def load_llm(self, path:str):
         if not os.path.isfile(path=path):
             raise FileNotFoundError(path)
         

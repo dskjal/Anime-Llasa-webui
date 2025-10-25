@@ -2,7 +2,7 @@ import gradio as gr
 from utils import App
 import glob
 
-DEFAULT_LLM = "./models/Anime-Llasa-3B.Q4_K_M.gguf"
+DEFAULT_LLM = "./models/Anime-Llasa-3B.Q8_0.gguf"
 app = App()
 app.load_llm(DEFAULT_LLM)
 
