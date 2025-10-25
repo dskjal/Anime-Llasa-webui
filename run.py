@@ -3,6 +3,7 @@ from utils import App
 import glob
 
 DEFAULT_LLM = "./models/Anime-Llasa-3B.Q8_0.gguf"
+DEFAULT_LLM_NAME = DEFAULT_LLM[9:-5]
 app = App()
 app.load_llm(DEFAULT_LLM)
 
@@ -17,7 +18,8 @@ with gr.Blocks() as server:
                 top_p_slider =  gr.Slider(minimum=0, maximum=1, value=0.95, step=0.01, precision=2, label="Top p")
                 temperature_slider =  gr.Slider(minimum=0, maximum=2, value=0.9, step=0.01, precision=1, label="Temperature")
                 repeat_penalty_slider = gr.Slider(minimum=0, maximum=10, value=1.1, step=0.1, precision=1, label="Repeat Penalty")
-                llm_dropdown = gr.Dropdown([f[9:-5] for f in glob.glob("./models/*.gguf")], label="LLM", interactive=True)
+                llms = [f[9:-5] for f in glob.glob("./models/*.gguf")]
+                llm_dropdown = gr.Dropdown(llms, value=DEFAULT_LLM_NAME if DEFAULT_LLM_NAME in llms else llms[0], label="LLM", interactive=True)
                 system_prompt = gr.Textbox(label="System prompt", value="Convert the text to speech:", lines=2, max_lines=3, scale=3, interactive=True)
             user_audio = gr.Audio(label="Upload an audio file you want to continue generating", interactive=True, type="filepath", max_length=300)
             
