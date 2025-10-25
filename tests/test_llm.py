@@ -9,7 +9,7 @@ MAX_CONTEXT_SIZE = 4096
 MAX_TOKENS = min(MAX_TOKENS, MAX_CONTEXT_SIZE)
 N_GPU_LAYERS = -1 if torch.cuda.is_available() else 0 
 
-GGUF_MODEL_PATH = "../models/Anime-Llasa-3B.Q4_K_M.gguf"
+GGUF_MODEL_PATH = "../models/Anime-Llasa-3B.Q8_0.gguf"
 llm = Llama(
     model_path=GGUF_MODEL_PATH,
     n_gpu_layers=N_GPU_LAYERS,
