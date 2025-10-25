@@ -9,7 +9,7 @@ VRAM 8 GB で Anime Llasa を動作させる webui。XCodec2 を fp16 で動作�
 - git
 - python 3.11
 - [Microsoft Visual C++ 2015-2022 Redistributable](https://learn.microsoft.com/ja-jp/cpp/windows/latest-supported-vc-redist?view=msvc-170)
-- [Anime-Llasa-3B.Q4_K_M.gguf](https://huggingface.co/mradermacher/Anime-Llasa-3B-GGUF/blob/main/Anime-Llasa-3B.Q4_K_M.gguf)
+- [Anime-Llasa-3B.Q8_0.gguf](https://huggingface.co/mradermacher/Anime-Llasa-3B-GGUF/blob/main/Anime-Llasa-3B.Q8_0.gguf)
 
 ## コマンド
 > git clone https://github.com/dskjal/Anime-Llasa-webui  
@@ -20,7 +20,7 @@ VRAM 8 GB で Anime Llasa を動作させる webui。XCodec2 を fp16 で動作�
 > pip install https://huggingface.co/NandemoGHS/Anime-XCodec2-44.1kHz/resolve/main/xcodec2-0.1.6.tar.gz
 
 
-Anime-Llasa-webui/models に [Anime-Llasa-3B.Q4_K_M.gguf](https://huggingface.co/mradermacher/Anime-Llasa-3B-GGUF/blob/main/Anime-Llasa-3B.Q4_K_M.gguf) を配置。
+Anime-Llasa-webui/models に [Anime-Llasa-3B.Q8_0.gguf](https://huggingface.co/mradermacher/Anime-Llasa-3B-GGUF/blob/main/Anime-Llasa-3B.Q8_0.gguf) を配置。
 
 # 起動
 Anime-Llasa-webui ディレクトリで
@@ -69,7 +69,7 @@ tests フォルダで powershell を開き以下のコマンドを実行。recon
 
 
 ## llm の動作検証
-tests フォルダで powershell を開き、Anime-Llasa-webui/models に Anime-Llasa-3B.Q4_K_M.gguf があることを確認する。以下のコマンドを実行し、0～65535 の数値が大量に出力されると成功。
+tests フォルダで powershell を開き、Anime-Llasa-webui/models に Anime-Llasa-3B.Q8_0.gguf があることを確認する。以下のコマンドを実行し、0～65535 の数値が大量に出力されると成功。
 
 > ..\venv\Scripts\activate  
 > python .\test_llm.py
