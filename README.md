@@ -92,6 +92,10 @@ tests フォルダで powershell を開き、Anime-Llasa-webui/models に Anime-
 
 LoRA の作成方法は [zhenye234/LLaSA_training](https://github.com/zhenye234/LLaSA_training/tree/main) を参照。
 
+# SageAttention
+
+[F.scaled_dot_product_attention = sageattn のような単純なパッチでは、精度が大きく低下すると報告されている](https://github.com/thu-ml/SageAttention/issues/55)。Llama 3.2 は Grouped-Query Attention を採用しており、SageAttention が GQA に非対応のため。
+
 # 関連リポジトリ
 - [HKUSTAudio/xcodec2](https://huggingface.co/HKUSTAudio/xcodec2)
 - [NandemoGHS/Anime-XCodec2-44.1kHz](https://huggingface.co/NandemoGHS/Anime-XCodec2-44.1kHz)
