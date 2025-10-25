@@ -27,7 +27,7 @@ Anime-Llasa-webui ディレクトリで
 > ./venv/Scripts/activate  
 > python ./run.py
 
-**初回起動時は HKUSTAudio/xcodec2 のダウンロードがあるので遅い。**
+**初回起動時は XCodec2 のダウンロードがあるので遅い。**
 
 # 使い方
 
