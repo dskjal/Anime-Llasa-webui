@@ -136,19 +136,15 @@ class App:
         return filepath
 
     def is_same_audio(self, audio_tokens:np.array):
-        if len(self.audio_token_cache) == 0 and len(audio_tokens) == 0:
+        cache_size = len(self.audio_token_cache)
+        audio_size = len(audio_tokens)
+
+        if audio_size == cache_size:
+            for i in range(audio_size):
+                if self.audio_token_cache[i] != audio_tokens[i]:
+                    return False
             return True
-        
-        if len(self.audio_token_cache) == 0 or len(audio_tokens) == 0:
-            return False
-        
-        if len(self.audio_token_cache) != len(audio_tokens):
-            return False
-        
-        for i in range(len(audio_tokens)):
-            if self.audio_token_cache[i] != audio_tokens[i]:
-                return False
-        return True
+        return False
     
     def t2token(self, t2s_text:str, system_prompt:str="Convert the text to speech:", system_text:str="", max_tokens:int=2048, top_k:int=0, top_p:float=0.95, temperature:float=0.7, repeat_penalty:float=1.1, audio_tokens:np.array=np.empty(0)) -> list:
         if self.llm == None and self.llm_path == None:
