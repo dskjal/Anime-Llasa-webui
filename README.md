@@ -40,9 +40,15 @@ Anime-Llasa-webui ディレクトリで
 3. 右の Generate ボタンを押す
 4. outputs フォルダに音声が生成される
 
+### 音声ファイルの続きを生成する機能
+
+音声ファイルの音声が「こんにちは」の場合、Text to Speech に「こんにちは『続きの文章』」を入力する。
+
+音声ファイルを使う場合は古いモデルの [Anime-Llasa-3B.Q8_0.gguf](https://huggingface.co/mradermacher/Anime-Llasa-3B-GGUF/blob/main/Anime-Llasa-3B.Q8_0.gguf) を使う方がいいかもしれない。音声ファイルを使う場合はキャプション（System Metadata）が無視されることが多く、Caption モデルは生成の成功率も低い。
+
 ### キャプション（System Metadata）なしでの生成
 
-System Metadata の Presets で @clear: を選択して、Caption (REQUIRED) を空にして生成する。古い Anime Llasa 3B のモデルへの切り替えは不要。
+System Metadata の Presets で @clear: を選択して、Caption (REQUIRED) を空にして生成する。
 
 ### 注意事項
 
@@ -56,10 +62,6 @@ safetensor モデルの読み込みは対応していません。
 - ひらがな・カタカナにする
 - 読点（、）を入れる
 - 別の漢字に変換する（成功、置換など）
-
-### 音声ファイルの続きを生成する機能
-
-音声ファイルの音声が「こんにちは」の場合、Text to Speech に「こんにちは『続きの文章』」を入力する。
 
 # トラブルシューティング
 ## 音声ファイルを入力すると生成時にエラーになる
