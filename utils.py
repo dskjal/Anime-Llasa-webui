@@ -9,11 +9,18 @@ from xcodec2.modeling_xcodec2 import XCodec2Model
 
 # トークンマップは https://huggingface.co/HKUSTAudio/Llasa-3B/blob/main/tokenizer.json を参照
 TOKEN_OFFSET = 128264
+EOT_ID = 128009
 TEXT_UNDERSTANDING_START = 128258
 TEXT_UNDERSTANDING_END = 128259
 SPEECH_GENERATION_START = 128260
 SPEECH_GENERATION_END = 128261
 MAX_CONTEXT_SIZE = 4096
+
+
+USE_FP16_XCODEC2 = True
+DTYPE = torch.float32
+if USE_FP16_XCODEC2:
+    DTYPE = torch.float16
 
 USE_44KHZ = True
 XCODEC2_MODEL = "HKUSTAudio/xcodec2"
@@ -42,16 +49,18 @@ class App:
         self.Codec_model = XCodec2Model.from_pretrained(XCODEC2_MODEL)
         self.Codec_model.eval()
 
-        # fp16 に変換
-        self.Codec_model = self.Codec_model.half()
-        # LayerNorm モジュールを特定し、FP32 に戻す
-        def cast_ln_to_fp32(m):
-            # PyTorchの LayerNorm のインスタンスであれば
-            if isinstance(m, torch.nn.LayerNorm):
-                m.float() # LayerNorm の重みを FP32 にキャスト
-                
-        # モデル全体に適用
-        self.Codec_model.apply(cast_ln_to_fp32)
+        if USE_FP16_XCODEC2:
+            # fp16 に変換
+            self.Codec_model = self.Codec_model.half()
+            # LayerNorm モジュールを特定し、FP32 に戻す
+            def cast_ln_to_fp32(m):
+                # PyTorchの LayerNorm のインスタンスであれば
+                if isinstance(m, torch.nn.LayerNorm):
+                    m.float() # LayerNorm の重みを FP32 にキャスト
+                    
+            # モデル全体に適用
+            self.Codec_model.apply(cast_ln_to_fp32)
+
         print(f"XCodec2 load time : {time.time()-old_time:.1f} sec")
 
 
@@ -100,7 +109,7 @@ class App:
     def set_persistent(self, is_persistent):
         self.is_persistent_generation = is_persistent
         
-    def t2speech(self, t2s_text:str, system_prompt:str="Convert the text to speech:", max_tokens:int=2048, top_k:int=0, top_p:float=0.95, temperature:float=0.9, repeat_penalty:float=1.1, output_folder_name="", audio_file_name:str="") -> str:
+    def t2speech(self, t2s_text:str, system_prompt:str="Convert the text to speech:", system_text:str="", max_tokens:int=2048, top_k:int=0, top_p:float=0.95, temperature:float=0.7, repeat_penalty:float=1.1, output_folder_name="", audio_file_name:str="") -> str:
         audio_tokens = self.audio_token_cache
         if audio_file_name:
             if audio_file_name != self.audio_file_name_cache:
@@ -114,7 +123,7 @@ class App:
 
         while True:
             old_time = time.time()
-            tokens = self.t2token(t2s_text, system_prompt, max_tokens, top_k, top_p, temperature, repeat_penalty, audio_tokens)
+            tokens = self.t2token(t2s_text, system_prompt, system_text, max_tokens, top_k, top_p, temperature, repeat_penalty, audio_tokens)
             print(f"Inference : {time.time()-old_time:.1f} sec")
 
             old_time = time.time()
@@ -141,7 +150,7 @@ class App:
                 return False
         return True
     
-    def t2token(self, t2s_text:str, system_prompt:str="Convert the text to speech:", max_tokens:int=2048, top_k:int=0, top_p:float=0.95, temperature:float=0.9, repeat_penalty:float=1.1, audio_tokens:np.array=np.empty(0)) -> list:
+    def t2token(self, t2s_text:str, system_prompt:str="Convert the text to speech:", system_text:str="", max_tokens:int=2048, top_k:int=0, top_p:float=0.95, temperature:float=0.7, repeat_penalty:float=1.1, audio_tokens:np.array=np.empty(0)) -> list:
         if self.llm == None and self.llm_path == None:
             raise RuntimeError("LLM is not loaded.")
         
@@ -153,11 +162,12 @@ class App:
 
             # cache check
             prompt_tokens = self.prompt_cache
-            if self.t2s_text_cache == t2s_text and self.system_prompt_cache == system_prompt and self.prompt_cache and self.is_same_audio(audio_tokens):
+            if self.t2s_text_cache == t2s_text and self.system_text_cache == system_text and self.prompt_cache and self.is_same_audio(audio_tokens):
                 # use cache
                 print("Use prompt cache")
             else:
                 prompt_tokens = []
+                prompt_tokens.extend(self.llm.tokenize(system_text.encode('utf-8')))
                 prompt_tokens.extend(self.llm.tokenize(system_prompt.encode('utf-8')))
                 prompt_tokens.append(TEXT_UNDERSTANDING_START)
                 prompt_tokens.extend(self.llm.tokenize(t2s_text.encode('utf-8')))
@@ -169,14 +179,14 @@ class App:
                 self.audio_token_cache = audio_tokens
 
                 self.t2s_text_cache = t2s_text
-                self.system_prompt_cache = system_prompt
+                self.system_text_cache = system_text
                 self.audio_token_cache = audio_tokens
                 self.prompt_cache = prompt_tokens
 
             self.llm.eval(prompt_tokens)
 
             generated_tokens = []#audio_tokens.tolist()
-            for i in range(max_tokens):
+            for _ in range(max_tokens):
                 token = self.llm.sample(
                     top_k=top_k,
                     top_p=top_p,
@@ -214,14 +224,14 @@ class App:
         wav_tensor = torch.from_numpy(wav).float().unsqueeze(0) # Shape: (1, T)
 
         with torch.no_grad():
-            with torch.autocast(device_type="cuda", dtype=torch.float16):
+            with torch.autocast(device_type="cuda", dtype=DTYPE):
                 return self.Codec_model.encode_code(input_waveform=wav_tensor).cpu()[0, 0, :].numpy()
         
     def token2speech(self, tokens:list, output_folder_name:str="") -> str:
         self.load_xcode2()
 
         with torch.no_grad():
-            with torch.autocast(device_type="cuda", dtype=torch.float16):
+            with torch.autocast(device_type="cuda", dtype=DTYPE):
                 speech_tokens = torch.tensor(tokens, device=cuda_device).unsqueeze(0).unsqueeze(0)
                 gen_wav = self.Codec_model.decode_code(speech_tokens)
 
