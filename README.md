@@ -40,6 +40,10 @@ Anime-Llasa-webui ディレクトリで
 3. 右の Generate ボタンを押す
 4. outputs フォルダに音声が生成される
 
+### キャプション（System Metadata）なしでの生成
+
+System Metadata の Presets で @clear: を選択して、Caption (REQUIRED) を空にして生成する。古い Anime Llasa 3B のモデルへの切り替えは不要。
+
 ### 注意事項
 
 Generate forever にチェックを入れて、Generate を押すと無限生成します。停止するには、Generate forever のチェックを外して、現在生成中の音声が生成されるまで待ってください。
@@ -100,6 +104,8 @@ tests フォルダで powershell を開き、Anime-Llasa-webui/models に Anime-
 [NandemoGHS/Anime-Llasa-3B](https://huggingface.co/NandemoGHS/Anime-Llasa-3B) は英語と中国語とにしか対応していない Llasa-3B を日本語に対応するように追加学習したもの。
 
 [mradermacher/Anime-Llasa-3B-GGUF](https://huggingface.co/mradermacher/Anime-Llasa-3B-GGUF) は Anime-Llasa-3B の量子化モデル。
+
+[Anime-Llasa-3B.Q8_0.gguf](https://huggingface.co/mradermacher/Anime-Llasa-3B-GGUF/blob/main/Anime-Llasa-3B.Q8_0.gguf) 
 
 ### Anime Llasa 3B Captions
 
