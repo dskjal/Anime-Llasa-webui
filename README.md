@@ -20,7 +20,7 @@ VRAM 8 GB で Anime Llasa を動作させる webui。Anime-XCodec2-44.1kHz を f
 > pip install https://huggingface.co/NandemoGHS/Anime-XCodec2-44.1kHz/resolve/main/xcodec2-0.1.6.tar.gz
 
 
-Anime-Llasa-webui/models に [Anime-Llasa-3B-Captions.Q8_0.gguf](https://huggingface.co/dskjal/Anime-Llasa-3B-Captions-GGUF/blob/main/Anime-Llasa-3B-Captions.Q8_0.gguf) [Anime-Llasa-3B.Q8_0.gguf] を配置。
+Anime-Llasa-webui/models に [Anime-Llasa-3B-Captions.Q8_0.gguf](https://huggingface.co/dskjal/Anime-Llasa-3B-Captions-GGUF/blob/main/Anime-Llasa-3B-Captions.Q8_0.gguf) を配置。
 
 # 起動
 Anime-Llasa-webui ディレクトリで
