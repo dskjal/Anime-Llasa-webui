@@ -76,14 +76,14 @@ Input:
     '1 = 1'
 </pre>
 
-## xcodec2 の動作検証
+## XCodec2 の動作検証
 tests フォルダで powershell を開き以下のコマンドを実行。reconstructed.wav が作成され、正常に再生されることを確認する。
 
 > ..\venv\Scripts\activate  
 > python .\test_xcodec2.py
 
 
-## llm の動作検証
+## LLM の動作検証
 tests フォルダで powershell を開き、Anime-Llasa-webui/models に Anime-Llasa-3B-Captions.Q8_0.gguf があることを確認する。以下のコマンドを実行し、0～65535 の数値が大量に出力されると成功。
 
 > ..\venv\Scripts\activate  
