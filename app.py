@@ -4,6 +4,7 @@ import os
 import time
 from xcodec2wrapper import XCodec2Wrapper
 from llasa import Llasa
+from whisper import Whisper
 
 
 class App:
@@ -12,6 +13,7 @@ class App:
 
         self.xcodec2 = XCodec2Wrapper(use_fp16=True, use_44khz=True)
         self.llm = Llasa()
+        self.whisper = Whisper()
 
         # cache
         self.audio_token_cache = np.empty(0)
@@ -38,7 +40,7 @@ class App:
     def set_persistent(self, is_persistent):
         self.is_persistent_generation = is_persistent
         
-    def t2speech(self, t2s_text:str, system_prompt:str="Convert the text to speech:", system_text:str="", max_tokens:int=2048, top_k:int=0, top_p:float=0.95, temperature:float=0.7, repeat_penalty:float=1.1, output_folder_name="", audio_file_name:str="") -> str:
+    def t2speech(self, t2s_text:str, system_prompt:str="Convert the text to speech:", system_text:str="", max_tokens:int=2048, top_k:int=0, top_p:float=0.95, temperature:float=0.7, repeat_penalty:float=1.1, output_folder_name="", audio_file_name:str="", transcript_text:str="") -> str:
 
         # audio2token
         audio_tokens = self.audio_token_cache
@@ -56,7 +58,7 @@ class App:
         # generation
         while True:
             old_time = time.time()
-            tokens = self.llm.t2token(t2s_text, system_prompt, system_text, max_tokens, top_k, top_p, temperature, repeat_penalty, audio_tokens)
+            tokens = self.llm.t2token(t2s_text, system_prompt, system_text, max_tokens, top_k, top_p, temperature, repeat_penalty, audio_tokens, transcript_text)
             print(f"Inference : {time.time()-old_time:.1f} sec")
 
             old_time = time.time()
@@ -68,4 +70,16 @@ class App:
 
         return filepath
 
+    def audio2text(self, audio_file_name:str) -> str:
+        old_time = time.time()
 
+        # xcodec2 を RAM に退避
+        self.xcodec2.move_to_ram()
+        self.whisper.load_model(use_anime_whisper=False)
+
+        result = self.whisper.audio2text(audio_file_name)
+
+        self.whisper.unload()
+        print(f"Whisper model inference time : {time.time()-old_time:.1f} sec")
+
+        return result

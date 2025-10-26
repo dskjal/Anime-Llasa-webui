@@ -65,10 +65,12 @@ class Llasa():
             return True
         return False
 
-    def t2token(self, t2s_text:str, system_prompt:str="Convert the text to speech:", system_text:str="", max_tokens:int=2048, top_k:int=0, top_p:float=0.95, temperature:float=0.7, repeat_penalty:float=1.1, audio_tokens:np.array=np.empty(0)) -> list:
+    def t2token(self, t2s_text:str, system_prompt:str="Convert the text to speech:", system_text:str="", max_tokens:int=2048, top_k:int=0, top_p:float=0.95, temperature:float=0.7, repeat_penalty:float=1.1, audio_tokens:np.array=np.empty(0), transcript_text:str="") -> list:
         if not self.is_loaded():
             self.load()
 
+        t2s_text = transcript_text + t2s_text   # 後方互換性のため
+        
         with torch.no_grad():
             # cache check
             prompt_tokens = self.prompt_cache

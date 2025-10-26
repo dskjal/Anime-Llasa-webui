@@ -75,8 +75,19 @@ with gr.Blocks() as server:
                 llm_dropdown = gr.Dropdown(llms, value=DEFAULT_LLM_NAME if DEFAULT_LLM_NAME in llms else llms[0], label="LLM", interactive=True)
                 system_prompt = gr.Textbox(label="System prompt", value="Convert the text to speech:", lines=2, max_lines=3, scale=3, interactive=True)
 
-            user_audio = gr.Audio(label="Reference Audio (Optional)", interactive=True, type="filepath", max_length=300)
+            '''
+            Reference Audio
+            '''
+            with gr.Accordion("Reference Audio (Optional)", open=True):
+                with gr.Row():
+                    transcript_text = gr.Textbox(label="Reference Text", placeholder="If you provide reference audio, you can optionally provide its transcript here.  Reference Audio を追加した場合、その文字起こし内容をここに入力する", lines=1, max_lines=1, scale=4, interactive=True)
+                    transcript_button = gr.Button(value="Auto Transcript", variant="primary", scale=1)
+
+                user_audio = gr.Audio(label="Reference Audio (Optional)", interactive=True, type="filepath", max_length=300)
             
+        '''
+        右側
+        '''
         with gr.Column(scale=1):
             with gr.Row():
                 gen_button = gr.Button(value="Generate", variant="primary", scale=4)
@@ -101,7 +112,8 @@ with gr.Blocks() as server:
             pitch_timbre_input:str,
             style_input:str,
             notes_input:str,
-            user_audio:str):
+            user_audio:str,
+            transcript_text:str):
         t2s_text = normalize_caption(t2s_text.strip())
         caption_input = normalize_caption(caption_input.strip())
         system_text = build_system_text({
@@ -115,7 +127,7 @@ with gr.Blocks() as server:
             'notes': notes_input,
             'caption': caption_input
         }) if caption_input else ""
-        return app.t2speech(t2s_text, system_prompt, system_text, max_tokens, top_k, top_p, temperature, repeat_penalty, output_folder_name, user_audio)
+        return app.t2speech(t2s_text, system_prompt, system_text, max_tokens, top_k, top_p, temperature, repeat_penalty, output_folder_name, user_audio, transcript_text)
     gen_button.click(fn=t2s_gen, inputs=[
         t2s_text, 
         system_prompt, 
@@ -134,7 +146,8 @@ with gr.Blocks() as server:
         pitch_timbre_input,
         style_input,
         notes_input,
-        user_audio], outputs=audio_output)
+        user_audio,
+        transcript_text], outputs=audio_output)
 
     def caption_presets_change(caption_preset:str):
         caption_name = caption_preset.split(':')[0]
@@ -145,4 +158,12 @@ with gr.Blocks() as server:
 
     llm_dropdown.change(fn=lambda model_name: app.load_llm(f"./models/{model_name}.gguf"), inputs=llm_dropdown, outputs=None)
     is_persistent_check.change(fn=lambda x: app.set_persistent(x), inputs=[is_persistent_check], outputs=None)
+
+    def transcript_click(user_audio:str):
+        if not user_audio:
+            return ""
+        return app.audio2text(user_audio)
+    transcript_button.click(fn=transcript_click, inputs=[user_audio], outputs=[transcript_text])
+
+    
 server.launch(inbrowser=True)
