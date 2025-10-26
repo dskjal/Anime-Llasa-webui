@@ -69,7 +69,7 @@ with gr.Blocks() as server:
             with gr.Accordion("LLM settings", open=False):
                 top_k_slider =  gr.Slider(minimum=0, maximum=100, value=0, step=1, precision=0, label="Top k")
                 top_p_slider =  gr.Slider(minimum=0, maximum=1, value=0.95, step=0.01, precision=2, label="Top p")
-                temperature_slider =  gr.Slider(minimum=0, maximum=2, value=0.7, step=0.01, precision=1, label="Temperature")
+                temperature_slider =  gr.Slider(minimum=0, maximum=2, value=0.8, step=0.01, precision=1, label="Temperature")
                 repeat_penalty_slider = gr.Slider(minimum=0, maximum=10, value=1.1, step=0.1, precision=1, label="Repeat Penalty")
                 llms = [f[9:-5] for f in glob.glob("./models/*.gguf")]
                 llm_dropdown = gr.Dropdown(llms, value=DEFAULT_LLM_NAME if DEFAULT_LLM_NAME in llms else llms[0], label="LLM", interactive=True)
