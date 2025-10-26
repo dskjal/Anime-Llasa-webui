@@ -123,11 +123,3 @@ LoRA の作成方法は [zhenye234/LLaSA_training](https://github.com/zhenye234/
 
 [F.scaled_dot_product_attention = sageattn のような単純なパッチでは、精度が大きく低下すると報告されている](https://github.com/thu-ml/SageAttention/issues/55)。Llama 3.2 は Grouped-Query Attention を採用しており、SageAttention が GQA に非対応のため。
 
-# 関連リポジトリ
-- [HKUSTAudio/xcodec2](https://huggingface.co/HKUSTAudio/xcodec2)
-- [NandemoGHS/Anime-XCodec2-44.1kHz](https://huggingface.co/NandemoGHS/Anime-XCodec2-44.1kHz)
-- [HKUSTAudio/Llasa-3B](https://huggingface.co/HKUSTAudio/Llasa-3B)
-- [NandemoGHS/Anime-Llasa-3B](https://huggingface.co/NandemoGHS/Anime-Llasa-3B)
-- [mradermacher/Anime-Llasa-3B-GGUF](https://huggingface.co/mradermacher/Anime-Llasa-3B-GGUF)
-- [NandemoGHS/Anime-Llasa-3B-Captions](https://huggingface.co/NandemoGHS/Anime-Llasa-3B-Captions)
-- [dskjal/Anime-Llasa-3B-Captions-GGUF](https://huggingface.co/dskjal/Anime-Llasa-3B-Captions-GGUF/blob/main/Anime-Llasa-3B-Captions.Q8_0.gguf)
