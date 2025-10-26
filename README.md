@@ -42,7 +42,9 @@ Anime-Llasa-webui ディレクトリで
 
 ### 音声ファイルの続きを生成する機能
 
-音声ファイルの音声が「こんにちは」の場合、Text to Speech に「こんにちは『続きの文章』」を入力する。
+1. Reference Audio にオーディオファイルをアップロードする
+2. Auto Transcript で自動書き起こしをするか、手動で音声テキストを入力する。初回実行時はモデルのダウンロードが発生するので遅い
+3. Text to Speech に続きの文章を入力する
 
 音声ファイルを使う場合は古いモデルの [Anime-Llasa-3B.Q8_0.gguf](https://huggingface.co/mradermacher/Anime-Llasa-3B-GGUF/blob/main/Anime-Llasa-3B.Q8_0.gguf) を使う方がいいかもしれない。音声ファイルを使う場合はキャプション（System Metadata）が無視されることが多く、Caption モデルは生成の成功率も低い。
 
