@@ -1,5 +1,5 @@
 # Anime-Llasa-webui
-VRAM 8 GB で Anime Llasa を動作させる webui。Anime-XCodec2-44.1kHz を fp16 で動作させているので、VRAM 8 GB で Anime Llasa Q8_0 が使用できる。
+VRAM 8 GB で Anime Llasa を動作させる webui。Anime-XCodec2-44.1kHz を fp16 で動作させているので、VRAM 8 GB で Anime Llasa Captions Q8_0 が使用できる。
 
 ![](https://github.com/dskjal/Anime-Llasa-webui/blob/main/images/ui.jpg)
 
@@ -9,7 +9,7 @@ VRAM 8 GB で Anime Llasa を動作させる webui。Anime-XCodec2-44.1kHz を f
 - git
 - python 3.11
 - [Microsoft Visual C++ 2015-2022 Redistributable](https://learn.microsoft.com/ja-jp/cpp/windows/latest-supported-vc-redist?view=msvc-170)
-- [Anime-Llasa-3B.Q8_0.gguf](https://huggingface.co/mradermacher/Anime-Llasa-3B-GGUF/blob/main/Anime-Llasa-3B.Q8_0.gguf)
+- [Anime-Llasa-3B-Captions.Q8_0.gguf](https://huggingface.co/dskjal/Anime-Llasa-3B-Captions-GGUF/blob/main/Anime-Llasa-3B-Captions.Q8_0.gguf)
 
 ## コマンド
 > git clone https://github.com/dskjal/Anime-Llasa-webui  
@@ -20,7 +20,7 @@ VRAM 8 GB で Anime Llasa を動作させる webui。Anime-XCodec2-44.1kHz を f
 > pip install https://huggingface.co/NandemoGHS/Anime-XCodec2-44.1kHz/resolve/main/xcodec2-0.1.6.tar.gz
 
 
-Anime-Llasa-webui/models に [Anime-Llasa-3B.Q8_0.gguf](https://huggingface.co/mradermacher/Anime-Llasa-3B-GGUF/blob/main/Anime-Llasa-3B.Q8_0.gguf) を配置。
+Anime-Llasa-webui/models に [Anime-Llasa-3B-Captions.Q8_0.gguf](https://huggingface.co/dskjal/Anime-Llasa-3B-Captions-GGUF/blob/main/Anime-Llasa-3B-Captions.Q8_0.gguf) [Anime-Llasa-3B.Q8_0.gguf] を配置。
 
 # 起動
 Anime-Llasa-webui ディレクトリで
@@ -33,9 +33,17 @@ Anime-Llasa-webui ディレクトリで
 
 **よく生成に失敗します。何度か生成してみてください**。
 
+### 生成方法
+
+1. Text to Speech に読み上げたい文章を入力する
+2. System Metadata の Presets から適当なプリセットを適用する
+3. 右の Generate ボタンを押す
+
+### 注意事項
+
 Generate forever にチェックを入れて、Generate を押すと無限生成します。停止するには、Generate forever のチェックを外して、現在生成中の音声が生成されるまで待ってください。
 
-System prompt を変更した学習はされていないので、System prompt を変更しても意味はありません。
+キャプション（System Metadata）とアップロードしたオーディオファイルとが矛盾している場合、オーディオファイルの内容が優先されることが多いです。
 
 safetensor モデルの読み込みは対応していません。
 
@@ -76,9 +84,15 @@ tests フォルダで powershell を開き、Anime-Llasa-webui/models に Anime-
 
 # 動作について
 
+生成にかかる時間の 99% が Llasa のトークン生成なので、Llama 3.2 が高速に動作するハードウェアを使うか、Llama 3.2 に適用可能な最適化を行うと動作が高速になる。
+
+### XCodec2
+
 [HKUSTAudio/xcodec2](https://huggingface.co/HKUSTAudio/xcodec2) は音声ファイルを 0～65535 の整数の配列にエンコード、整数の配列から音声ファイルへデコードするモデル。
 
 [NandemoGHS/Anime-XCodec2-44.1kHz](https://huggingface.co/NandemoGHS/Anime-XCodec2-44.1kHz) XCodec2 の出力層を 44.1kHz に対応するように、ファインチューンしたもの。
+
+### (Anime) Llasa 3B
 
 [HKUSTAudio/Llasa-3B](https://huggingface.co/HKUSTAudio/Llasa-3B) は Llama 3.2 を、テキストから XCodec2 がデコード可能な数値の配列を出力するようにファインチューンしたもの。
 
@@ -86,7 +100,13 @@ tests フォルダで powershell を開き、Anime-Llasa-webui/models に Anime-
 
 [mradermacher/Anime-Llasa-3B-GGUF](https://huggingface.co/mradermacher/Anime-Llasa-3B-GGUF) は Anime-Llasa-3B の量子化モデル。
 
-生成にかかる時間の 99% が Llasa のトークン生成なので、Llama 3.2 が高速に動作するハードウェアを使うか、Llama 3.2 に適用可能な最適化を行うと動作が高速になる。
+### Anime Llasa 3B Captions
+
+[NandemoGHS/Anime-Llasa-3B-Captions](https://huggingface.co/NandemoGHS/Anime-Llasa-3B-Captions) キャプションを使って Anime-Llasa-3B をさらにファインチューンしたもの。
+
+[dskjal/Anime-Llasa-3B-Captions-GGUF](https://huggingface.co/dskjal/Anime-Llasa-3B-Captions-GGUF/blob/main/Anime-Llasa-3B-Captions.Q8_0.gguf) は Anime-Llasa-3B-Captions の量子化モデル。
+
+
 
 # LoRA
 
