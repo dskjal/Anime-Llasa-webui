@@ -1,5 +1,5 @@
 import gradio as gr
-from utils import App
+from app import App
 from caption import build_system_text, normalize_caption
 import glob
 import json
