@@ -139,7 +139,7 @@ with gr.Blocks() as server:
     def caption_presets_change(caption_preset:str):
         caption_name = caption_preset.split(':')[0]
         j = load_preset_from_name(f'./caption_presets/{caption_name}.json')
-        gr.Info("Helpful info message ℹ️", duration=5)
+        #gr.Info("Helpful info message ℹ️", duration=5)
         return (j["caption"], j["emotion"], j["profile"], j["mood"], j["speed"], j["prosody"], j["pitch_timbre"], j["style"], j["notes"])
     caption_presets.change(fn=caption_presets_change, inputs=caption_presets, outputs=[caption_input, emotion_input, profile_input, mood_input, speed_input, prosody_input, pitch_timbre_input, style_input, notes_input])
 
