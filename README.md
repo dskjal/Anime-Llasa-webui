@@ -38,6 +38,7 @@ Anime-Llasa-webui ディレクトリで
 1. Text to Speech に読み上げたい文章を入力する
 2. System Metadata の Presets から適当なプリセットを適用する
 3. 右の Generate ボタンを押す
+4. outputs に音声が生成される
 
 ### 注意事項
 
