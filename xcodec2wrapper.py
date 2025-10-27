@@ -1,4 +1,7 @@
 from xcodec2.modeling_xcodec2 import XCodec2Model
+from xcodec2.configuration_bigcodec import BigCodecConfig
+from huggingface_hub import hf_hub_download
+from safetensors import safe_open
 import soundfile as sf
 import librosa
 import torch
@@ -17,12 +20,23 @@ class XCodec2Wrapper():
         self.xcodec2_model_name = "HKUSTAudio/xcodec2"
         self.encoder_sr = 16000   # xcodec2 の動作周波数
         self.decoder_sr = self.encoder_sr
+
+        old_time = time.time()
         if use_44khz:
             self.xcodec2_model_name = "NandemoGHS/Anime-XCodec2-44.1kHz"
             self.decoder_sr = 44100
-
-        old_time = time.time()
-        self.Codec_model = XCodec2Model.from_pretrained(self.xcodec2_model_name)
+            ckpt_path = hf_hub_download(repo_id=self.xcodec2_model_name, filename="model.safetensors")
+            ckpt = {}
+            with safe_open(ckpt_path, framework="pt", device="cpu") as f:
+                for k in f.keys():
+                    ckpt[k.replace(".beta", ".bias")] = f.get_tensor(k)
+                codec_config = BigCodecConfig.from_pretrained(self.xcodec2_model_name)
+                self.Codec_model = XCodec2Model.from_pretrained(
+                    None, config=codec_config, state_dict=ckpt
+                )
+        else:
+            self.Codec_model = XCodec2Model.from_pretrained(self.xcodec2_model_name)
+            
         self.Codec_model.eval()
         print(f"XCodec2 load time : {time.time()-old_time:.1f} sec")
 
