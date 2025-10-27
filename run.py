@@ -131,7 +131,7 @@ with gr.Blocks() as server:
             'notes': notes_input,
             'caption': caption_input
         }) if caption_input else ""
-        return app.t2speech(t2s_text, system_prompt, system_text, max_tokens, top_k, top_p, temperature, repeat_penalty, output_folder_name, user_audio, transcript_text)
+        return app.t2speech(t2s_text, system_prompt, system_text, max_tokens, top_k, top_p, temperature, repeat_penalty, output_folder_name, user_audio, normalize_caption(transcript_text))
     gen_button.click(fn=t2s_gen, inputs=[
         t2s_text, 
         system_prompt, 
