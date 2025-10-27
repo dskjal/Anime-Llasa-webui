@@ -3,14 +3,10 @@ from llama_cpp import Llama
 import torch
 import time
 import numpy as np
-from utils import cpu_device, cuda_device, has_available_vram_gb
 
 # トークンマップは https://huggingface.co/HKUSTAudio/Llasa-3B/blob/main/tokenizer.json を参照
 TOKEN_OFFSET = 128264
 EOT_ID = 128009
-TEXT_UNDERSTANDING_START = 128258
-TEXT_UNDERSTANDING_END = 128259
-SPEECH_GENERATION_START = 128260
 SPEECH_GENERATION_END = 128261
 MAX_CONTEXT_SIZE = 4096
 
@@ -65,6 +61,7 @@ class Llasa():
             return True
         return False
 
+
     def t2token(self, t2s_text:str, system_prompt:str="Convert the text to speech:", system_text:str="", max_tokens:int=2048, top_k:int=0, top_p:float=0.95, temperature:float=0.7, repeat_penalty:float=1.1, audio_tokens:np.array=np.empty(0), transcript_text:str="") -> list:
         if not self.is_loaded():
             self.load()
@@ -78,13 +75,9 @@ class Llasa():
                 # use cache
                 print("Use prompt cache")
             else:
-                prompt_tokens = []
-                prompt_tokens.extend(self.llm.tokenize(system_text.encode('utf-8')))
-                prompt_tokens.extend(self.llm.tokenize(system_prompt.encode('utf-8')))
-                prompt_tokens.append(TEXT_UNDERSTANDING_START)
-                prompt_tokens.extend(self.llm.tokenize(t2s_text.encode('utf-8')))
-                prompt_tokens.append(TEXT_UNDERSTANDING_END)
-                prompt_tokens.append(SPEECH_GENERATION_START)
+                text = f"<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n{system_text}<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n{system_prompt}<|TEXT_UNDERSTANDING_START|>{t2s_text}<|TEXT_UNDERSTANDING_END|><|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n<|SPEECH_GENERATION_START|>"
+
+                prompt_tokens = self.llm.tokenize(text.encode('utf-8'), add_bos=False, special=True)
 
                 if len(audio_tokens) > 0:
                     prompt_tokens.extend([token+TOKEN_OFFSET for token in audio_tokens.tolist()])
@@ -109,6 +102,9 @@ class Llasa():
                 # 停止条件
                 if token == SPEECH_GENERATION_END:
                     print("\n[EOS token detected]")
+                    break
+                elif token == EOT_ID:
+                    print("\n[EOT token detected]")
                     break
 
                 if token >= TOKEN_OFFSET:

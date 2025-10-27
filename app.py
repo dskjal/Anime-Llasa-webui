@@ -2,6 +2,7 @@ import torch
 import numpy as np
 import os
 import time
+from utils import has_available_vram_gb
 from xcodec2wrapper import XCodec2Wrapper
 from llasa import Llasa
 from whisper import Whisper
@@ -30,7 +31,7 @@ class App:
             print(f"Failed to load llm: {e}")
 
         # offload xcodec2
-        self.xcodec2.move_to_cpu()
+        self.xcodec2.move_to_ram()
         torch.cuda.empty_cache()
         try:
             self.llm.load(path)
@@ -58,8 +59,12 @@ class App:
         # generation
         while True:
             old_time = time.time()
+
             tokens = self.llm.t2token(t2s_text, system_prompt, system_text, max_tokens, top_k, top_p, temperature, repeat_penalty, audio_tokens, transcript_text)
             print(f"Inference : {time.time()-old_time:.1f} sec")
+
+            if not has_available_vram_gb(self.xcodec2.get_required_vram_size_gb()):
+                self.llm.unload()
 
             old_time = time.time()
             filepath =  self.xcodec2.token2speech(tokens, output_folder_name)
