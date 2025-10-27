@@ -74,7 +74,7 @@ You may consider adding `ignore_mismatched_sizes=True` in the model `from_pretra
 
 Anime-XCodec2-44.1kHz をインストールする
 
-> ./venv/Scripts/activate
+> ./venv/Scripts/activate  
 > pip install https://huggingface.co/NandemoGHS/Anime-XCodec2-44.1kHz/resolve/main/xcodec2-0.1.6.tar.gz
 
 
