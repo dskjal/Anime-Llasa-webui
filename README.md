@@ -66,6 +66,18 @@ safetensor モデルの読み込みは対応していません。
 - 別の漢字に変換する（成功、置換など）
 
 # トラブルシューティング
+## XCodec2 のサイズミスマッチエラーが出る
+<pre>
+size mismatch for generator.head.istft.window: copying a param with shape torch.Size([588]) from checkpoint, the shape in current model is torch.Size([1280]).
+You may consider adding `ignore_mismatched_sizes=True` in the model `from_pretrained` method.
+</pre>
+
+Anime-XCodec2-44.1kHz をインストールする
+
+> ./venv/Scripts/activate
+> pip install https://huggingface.co/NandemoGHS/Anime-XCodec2-44.1kHz/resolve/main/xcodec2-0.1.6.tar.gz
+
+
 ## 音声ファイルを入力すると生成時にエラーになる
 以下のエラーは XCodec2 がエンコードに失敗したときに出る。環境音・吐息・笑い声のような音声化しづらい音がファイルの前後に入っていると失敗しやすい。
 
