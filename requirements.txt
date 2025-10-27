@@ -8,6 +8,7 @@ transformers==4.48.0
 llama-cpp-python==0.3.4
 torch==2.5.0+cu124
 torchaudio==2.5.0+cu124
+accelerate==0.26.0
 
 # latest torchao uses torch.int1, but torch.int1 requires torch>=2.6.0
 torchao==0.7.0
