@@ -3,7 +3,7 @@ import librosa
 import gc
 import time
 from transformers import pipeline
-from utils import cpu_device, cuda_device, has_available_vram_gb
+from utils import cuda_device
 
 ANIME_WHISPER = "litagin/anime-whisper"
 WHISPER_LARGE_V3_TURBO = "openai/whisper-large-v3-turbo"
@@ -29,14 +29,14 @@ class Whisper():
             return ANIME_WHISPER if self.use_anime_whisper else WHISPER_LARGE_V3_TURBO
         return ""
     
-    def load_model(self, use_anime_whisper=True) -> None:
-        self.use_anime_whisper = use_anime_whisper
-        model_name = ANIME_WHISPER if use_anime_whisper else WHISPER_LARGE_V3_TURBO
+    def load_model(self, transcript_model:str) -> None:
+        self.use_anime_whisper = transcript_model == ANIME_WHISPER
+        self.model_name = transcript_model
         old_time = time.time()
-        if use_anime_whisper:
+        if self.use_anime_whisper:
             self.pipe = pipeline(
                 "automatic-speech-recognition",
-                model=model_name,
+                model=self.model_name,
                 device=cuda_device,
                 torch_dtype=torch.float16,
                 chunk_length_s=30.0,
@@ -45,11 +45,11 @@ class Whisper():
         else:
             self.pipe = pipeline(
                 "automatic-speech-recognition",
-                model=model_name,
+                model=self.model_name,
                 device=cuda_device,
                 torch_dtype=torch.float16)
         self.pipe.model.eval()
-        print(f"{model_name} load time : {time.time()-old_time:.1f} sec")
+        print(f"{self.model_name} load time : {time.time()-old_time:.1f} sec")
             
 
     def unload(self) -> None:
@@ -74,8 +74,9 @@ class Whisper():
         
     #     print("Load Whisper model to vram failed. CPU is used.")
 
-    def audio2text(self, audio_path):
+    def audio2text(self, audio_path:str) -> str:
         wav, _ = librosa.load(audio_path, sr=self.audio_sr)
+
         if self.use_anime_whisper:
             text = self.pipe(wav, generate_kwargs=self.generate_kwargs)['text'].strip()
         else:

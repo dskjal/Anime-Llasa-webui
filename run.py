@@ -3,6 +3,7 @@ from app import App
 from caption import build_system_text, normalize_caption
 import glob
 import json
+from whisper import ANIME_WHISPER, WHISPER_LARGE_V3_TURBO
 
 DEFAULT_LLM = "./models/Anime-Llasa-3B-Captions.Q8_0.gguf"
 DEFAULT_LLM_NAME = DEFAULT_LLM[9:-5]
@@ -80,8 +81,11 @@ with gr.Blocks() as server:
             '''
             with gr.Accordion("Reference Audio (Optional)", open=True):
                 with gr.Row():
-                    transcript_text = gr.Textbox(label="Reference Text", placeholder="If you provide reference audio, you can optionally provide its transcript here.  Reference Audio を追加した場合、その文字起こし内容をここに入力する", lines=1, max_lines=1, scale=4, interactive=True)
-                    transcript_button = gr.Button(value="Auto Transcript", variant="primary", scale=1)
+                    with gr.Column(scale=4):
+                        transcript_text = gr.Textbox(label="Reference Text", placeholder="If you provide reference audio, you can optionally provide its transcript here.  Reference Audio を追加した場合、その文字起こし内容をここに入力する", lines=2, max_lines=2, interactive=True)
+                    with gr.Column(scale=1):
+                        transcript_button = gr.Button(value="Auto Transcript", variant="primary")
+                        transcript_dropdown = gr.Dropdown([ANIME_WHISPER, WHISPER_LARGE_V3_TURBO] , label="Transcript Model", interactive=True)
 
                 user_audio = gr.Audio(label="Reference Audio (Optional)", interactive=True, type="filepath", max_length=300)
             
@@ -159,11 +163,11 @@ with gr.Blocks() as server:
     llm_dropdown.change(fn=lambda model_name: app.load_llm(f"./models/{model_name}.gguf"), inputs=llm_dropdown, outputs=None)
     is_persistent_check.change(fn=lambda x: app.set_persistent(x), inputs=[is_persistent_check], outputs=None)
 
-    def transcript_click(user_audio:str):
+    def transcript_click(user_audio:str, transcript_model:str):
         if not user_audio:
             return ""
-        return app.audio2text(user_audio)
-    transcript_button.click(fn=transcript_click, inputs=[user_audio], outputs=[transcript_text])
+        return app.audio2text(user_audio, transcript_model)
+    transcript_button.click(fn=transcript_click, inputs=[user_audio, transcript_dropdown], outputs=[transcript_text])
 
     
 server.launch(inbrowser=True)

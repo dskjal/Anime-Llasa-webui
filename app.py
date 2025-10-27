@@ -70,12 +70,12 @@ class App:
 
         return filepath
 
-    def audio2text(self, audio_file_name:str) -> str:
+    def audio2text(self, audio_file_name:str, transcript_model:str) -> str:
         old_time = time.time()
 
         # xcodec2 を RAM に退避
         self.xcodec2.move_to_ram()
-        self.whisper.load_model(use_anime_whisper=False)
+        self.whisper.load_model(transcript_model)
 
         result = self.whisper.audio2text(audio_file_name)
 
