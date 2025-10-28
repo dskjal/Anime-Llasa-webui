@@ -14,7 +14,11 @@ class XCodec2Wrapper():
     def __init__(self, use_fp16:bool=True, use_44khz:bool=True):
         self.load_model(use_44khz)
         self.quantize(use_fp16)
+        self.vram_gb = 2
 
+    def get_required_vram_size_gb(self) -> float:
+        return self.vram_gb
+    
     def load_model(self, use_44khz:bool=True):
         self.use_44khz = use_44khz
         self.xcodec2_model_name = "HKUSTAudio/xcodec2"
@@ -60,17 +64,18 @@ class XCodec2Wrapper():
 
     def move_to_ram(self) -> None:
         self.Codec_model.to(cpu_device)
+        torch.cuda.empty_cache()
 
     def move_to_vram(self) -> None:
         if self.Codec_model.device == cuda_device:
             return
         
         required_vram = 2 * 1024**3 if self.use_fp16 else 3.5 * 1024**3
-        if has_available_vram_gb(required_vram) :
-            self.Codec_model.to(cuda_device)
+        if not has_available_vram_gb(required_vram) :
+            print("Load XCodec2 to vram failed. CPU is used.")
             return
         
-        print("Load XCodec2 to vram failed. CPU is used.")
+        self.Codec_model.to(cuda_device)
 
     def speech2token(self, audio_file:str) -> np.array:
         if not os.path.isfile(audio_file):
