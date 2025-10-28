@@ -66,14 +66,24 @@ class App:
             if not has_available_vram_gb(self.xcodec2.get_required_vram_size_gb()):
                 self.llm.unload()
 
+            if output_folder_name:
+                if not os.path.isdir(f"./outputs/{output_folder_name}"):
+                    os.mkdir(f"./outputs/{output_folder_name}")
+                output_folder_name = output_folder_name + "/"
+
+            import datetime
+            filename = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+            audio_file_path = f"./outputs/{output_folder_name}{filename}.wav"
+
+
             old_time = time.time()
-            filepath =  self.xcodec2.token2speech(tokens, output_folder_name)
+            self.xcodec2.token2speech(tokens, audio_file_path)
             print(f"Speech generation : {time.time()-old_time:.1f} sec\n")
 
             if not self.is_persistent_generation:
                 break
 
-        return filepath
+        return audio_file_path
 
     def audio2text(self, audio_file_name:str, transcript_model:str) -> str:
         old_time = time.time()

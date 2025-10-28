@@ -70,8 +70,8 @@ class XCodec2Wrapper():
         if self.Codec_model.device == cuda_device:
             return
         
-        required_vram = 2 * 1024**3 if self.use_fp16 else 3.5 * 1024**3
-        if not has_available_vram_gb(required_vram) :
+        required_vram_gb = 2 * 1024**3 if self.use_fp16 else 3.5 * 1024**3
+        if not has_available_vram_gb(required_vram_gb) :
             print("Load XCodec2 to vram failed. CPU is used.")
             return
         
@@ -90,7 +90,7 @@ class XCodec2Wrapper():
             with torch.autocast(device_type="cuda", dtype=self.dtype):
                 return self.Codec_model.encode_code(input_waveform=wav_tensor).cpu()[0, 0, :].numpy()
         
-    def token2speech(self, tokens:list, output_folder_name:str="") -> str:
+    def token2speech(self, tokens:list, audio_file_path:str) -> str:
         self.move_to_vram()
 
         with torch.no_grad():
@@ -98,15 +98,6 @@ class XCodec2Wrapper():
                 speech_tokens = torch.tensor(tokens, device=cuda_device).unsqueeze(0).unsqueeze(0)
                 gen_wav = self.Codec_model.decode_code(speech_tokens)
 
-        if output_folder_name:
-            if not os.path.isdir(f"./outputs/{output_folder_name}"):
-                os.mkdir(f"./outputs/{output_folder_name}")
-            output_folder_name = output_folder_name + "/"
-
-        import datetime
-        filename = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        output_file = f"./outputs/{output_folder_name}{filename}.wav"
-        sf.write(output_file, gen_wav[0, 0, :].cpu().numpy(), self.decoder_sr)
+        sf.write(audio_file_path, gen_wav[0, 0, :].cpu().numpy(), self.decoder_sr)
         # with open(f"./outputs/{filename}.txt", "w", encoding="utf-8") as f:
         #     f.write(','.join([str(i) for i in tokens]))
-        return output_file
