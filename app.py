@@ -60,7 +60,7 @@ class App:
         while True:
             old_time = time.time()
 
-            tokens = self.llm.t2token(t2s_text, system_prompt, system_text, max_tokens, top_k, top_p, temperature, repeat_penalty, audio_tokens, transcript_text)
+            tokens, reason = self.llm.t2token(t2s_text, system_prompt, system_text, max_tokens, top_k, top_p, temperature, repeat_penalty, audio_tokens, transcript_text)
             print(f"Inference : {time.time()-old_time:.1f} sec")
 
             if not has_available_vram_gb(self.xcodec2.get_required_vram_size_gb()):
@@ -75,6 +75,10 @@ class App:
             filename = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
             audio_file_path = f"./outputs/{output_folder_name}{filename}.wav"
 
+            # write token
+            # with open(f"./outputs/{output_folder_name}{filename}.txt", "w", encoding='utf-8') as f:
+            #     for t in tokens:
+            #         print(t, sep=',', file=f)
 
             old_time = time.time()
             self.xcodec2.token2speech(tokens, audio_file_path)
@@ -83,7 +87,7 @@ class App:
             if not self.is_persistent_generation:
                 break
 
-        return audio_file_path
+        return audio_file_path, reason
 
     def audio2text(self, audio_file_name:str, transcript_model:str) -> str:
         old_time = time.time()

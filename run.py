@@ -96,6 +96,7 @@ with gr.Blocks() as server:
             with gr.Row():
                 gen_button = gr.Button(value="Generate", variant="primary", scale=4)
                 is_persistent_check = gr.Checkbox(value=False, label="Generate forever", scale=1)
+            reason_label = gr.Label(label="End reason")
             audio_output = gr.Audio(editable=True, type="filepath")
     
     def t2s_gen(
@@ -151,7 +152,7 @@ with gr.Blocks() as server:
         style_input,
         notes_input,
         user_audio,
-        transcript_text], outputs=audio_output)
+        transcript_text], outputs=[audio_output, reason_label])
 
     def caption_presets_change(caption_preset:str):
         caption_name = caption_preset.split(':')[0]
