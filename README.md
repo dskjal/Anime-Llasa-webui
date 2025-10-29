@@ -124,7 +124,6 @@ LoRA の作成方法は以下のリポジトリを参照してください。
 - [LLASA-Trainer](https://github.com/laksjdjf/llasa-trainer)
 - [zhenye234/LLaSA_training](https://github.com/zhenye234/LLaSA_training/tree/main)
 
-Anime-Llasa-webui で使うにはモデルを gguf 量子化する必要がある。Windows での量子化方法は [Windows で llama.cpp のビルド](https://dskjal.com/deeplearning/build-llama-cpp.html) を参照してください。
 
 # SageAttention
 
