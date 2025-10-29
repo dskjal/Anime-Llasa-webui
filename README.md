@@ -120,6 +120,8 @@ tests フォルダで powershell を開き、Anime-Llasa-webui/models に Anime-
 
 # LoRA
 
+loras フォルダに LoRA を配置し、LLM settings の LoRA で選択してください。
+
 LoRA の作成方法は以下のリポジトリを参照してください。
 - [LLASA-Trainer](https://github.com/laksjdjf/llasa-trainer)
 - [zhenye234/LLaSA_training](https://github.com/zhenye234/LLaSA_training/tree/main)
