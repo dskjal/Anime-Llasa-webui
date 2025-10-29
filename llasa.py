@@ -3,6 +3,8 @@ from llama_cpp import Llama
 import torch
 import time
 import numpy as np
+import gc
+
 
 # トークンマップは https://huggingface.co/HKUSTAudio/Llasa-3B/blob/main/tokenizer.json を参照
 TOKEN_OFFSET = 128264
@@ -34,24 +36,39 @@ class Llasa():
         self.prompt_cache = []
         path = path or self.llm_path
         old_time = time.time()
-        self.llm = Llama(
-            model_path=path,
-            n_gpu_layers=self.n_gpu_layers,
-            n_ctx=MAX_CONTEXT_SIZE,
-            flash_attn=True,
-            # type_k=8,   # GGML_TYPE_Q8_0
-            # type_v=8,   # GGML_TYPE_Q8_0
-            lora_path=lora_path,
-            lora_scale=lora_scale,
-            verbose=False,
-        )
+        try:
+            self.llm = Llama(
+                model_path=path,
+                n_gpu_layers=self.n_gpu_layers,
+                n_ctx=MAX_CONTEXT_SIZE,
+                flash_attn=True,
+                # type_k=8,   # GGML_TYPE_Q8_0
+                # type_v=8,   # GGML_TYPE_Q8_0
+                lora_path=lora_path,
+                lora_scale=lora_scale,
+                verbose=False,
+            )
+        except Exception as e:
+            if hasattr(self.llm, '_model') and self.llm._model is not None:
+                # 内部モデルオブジェクトのデストラクタを強制的に呼び出す
+                self.llm._model.__del__() 
+                self.llm._model = None # 内部参照もクリア
+            del self.llm
+            self.llm = None
+            gc.collect()
+            raise Exception(f"Load {path} failed. Lora :{lora_path}.")
+
         self.llm_path = path
         print(f"{path} loaded. Load time : {time.time()-old_time:.1f} sec")
 
     def unload(self) -> None:
         if self.llm:
             self.llm.close()
+            del self.llm
             self.llm = None
+            gc.collect()
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
             print("unload llm")
 
     def is_same_audio(self, audio_tokens:np.array):
@@ -72,11 +89,12 @@ class Llasa():
         if self.lora_path != lora_path or self.lora_scale != lora_scale:
             self.lora_path = lora_path
             self.lora_scale = lora_scale
-            self.unload()
+            if self.is_loaded():
+                self.unload()
             self.load(path="", lora_path=lora_path, lora_scale=lora_scale)
 
         if not self.is_loaded():
-            self.load()
+            self.load(path="", lora_path=lora_path, lora_scale=lora_scale)
 
         t2s_text = transcript_text + t2s_text   # 後方互換性のため
         

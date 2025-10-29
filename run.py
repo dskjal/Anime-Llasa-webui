@@ -75,7 +75,7 @@ with gr.Blocks() as server:
                 llms = [f[9:-5] for f in glob.glob("./models/*.gguf")]
                 llm_dropdown = gr.Dropdown(llms, value=DEFAULT_LLM_NAME if DEFAULT_LLM_NAME in llms else llms[0], label="LLM", interactive=True)
                 with gr.Row():
-                    loras = ["None"] + [f[8:] for f in glob.glob("./loras/*")]
+                    loras = ["None"] + [f[8:] for f in glob.glob("./loras/*") if not f.endswith(".txt")]
                     lora_path = gr.Dropdown(loras, value="None", label="LoRA", interactive=True, scale=1)
                     lora_scale = gr.Slider(minimum=0.0, maximum=1.0, value=1.0, step=0.01, precision=2, label="LoRA Scale", scale=2, interactive=True)
 
