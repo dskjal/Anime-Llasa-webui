@@ -41,7 +41,7 @@ class App:
     def set_persistent(self, is_persistent):
         self.is_persistent_generation = is_persistent
         
-    def t2speech(self, t2s_text:str, system_prompt:str="Convert the text to speech:", system_text:str="", max_tokens:int=2048, top_k:int=0, top_p:float=0.95, temperature:float=0.7, repeat_penalty:float=1.1, output_folder_name="", audio_file_name:str="", transcript_text:str="") -> str:
+    def t2speech(self, t2s_text:str, system_prompt:str="Convert the text to speech:", system_text:str="", max_tokens:int=2048, top_k:int=0, top_p:float=0.95, temperature:float=0.7, repeat_penalty:float=1.1, lora_path:str="None", lora_scale:float=1.0, output_folder_name="", audio_file_name:str="", transcript_text:str="") -> str:
 
         # audio2token
         audio_tokens = self.audio_token_cache
@@ -60,7 +60,7 @@ class App:
         while True:
             old_time = time.time()
 
-            tokens, reason = self.llm.t2token(t2s_text, system_prompt, system_text, max_tokens, top_k, top_p, temperature, repeat_penalty, audio_tokens, transcript_text)
+            tokens, reason = self.llm.t2token(t2s_text, system_prompt, system_text, max_tokens, top_k, top_p, temperature, repeat_penalty, lora_path, lora_scale, audio_tokens, transcript_text)
             print(f"Inference : {time.time()-old_time:.1f} sec")
 
             if not has_available_vram_gb(self.xcodec2.get_required_vram_size_gb()):

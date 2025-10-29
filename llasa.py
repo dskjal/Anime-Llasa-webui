@@ -15,6 +15,8 @@ class Llasa():
         self.n_gpu_layers = -1 if torch.cuda.is_available() else 0 
         self.llm = None
         self.llm_path = None
+        self.lora_path = "None"
+        self.lora_scale = 1.0
 
         # cache
         self.t2s_text_cache = ""
@@ -26,7 +28,8 @@ class Llasa():
     def is_loaded(self) -> bool:
         return self.llm != None
     
-    def load(self, path:str="") -> None:
+    def load(self, path:str="", lora_path:str="None", lora_scale:float=1.0) -> None:
+        lora_path = lora_path if lora_path != "None" else None
         self.unload()
         self.prompt_cache = []
         path = path or self.llm_path
@@ -38,6 +41,8 @@ class Llasa():
             flash_attn=True,
             # type_k=8,   # GGML_TYPE_Q8_0
             # type_v=8,   # GGML_TYPE_Q8_0
+            lora_path=lora_path,
+            lora_scale=lora_scale,
             verbose=False,
         )
         self.llm_path = path
@@ -62,7 +67,14 @@ class Llasa():
         return True
 
 
-    def t2token(self, t2s_text:str, system_prompt:str="Convert the text to speech:", system_text:str="", max_tokens:int=2048, top_k:int=0, top_p:float=0.95, temperature:float=0.7, repeat_penalty:float=1.1, audio_tokens:np.array=np.empty(0), transcript_text:str="") -> list:
+    def t2token(self, t2s_text:str, system_prompt:str="Convert the text to speech:", system_text:str="", max_tokens:int=2048, top_k:int=0, top_p:float=0.95, temperature:float=0.7, repeat_penalty:float=1.1, lora_path:str="None", lora_scale:float=1.0, audio_tokens:np.array=np.empty(0), transcript_text:str="") -> list:
+        # lora check
+        if self.lora_path != lora_path or self.lora_scale != lora_scale:
+            self.lora_path = lora_path
+            self.lora_scale = lora_scale
+            self.unload()
+            self.load(path="", lora_path=lora_path, lora_scale=lora_scale)
+
         if not self.is_loaded():
             self.load()
 

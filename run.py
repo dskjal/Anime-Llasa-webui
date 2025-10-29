@@ -74,6 +74,11 @@ with gr.Blocks() as server:
                 repeat_penalty_slider = gr.Slider(minimum=0, maximum=10, value=1.1, step=0.1, precision=1, label="Repeat Penalty")
                 llms = [f[9:-5] for f in glob.glob("./models/*.gguf")]
                 llm_dropdown = gr.Dropdown(llms, value=DEFAULT_LLM_NAME if DEFAULT_LLM_NAME in llms else llms[0], label="LLM", interactive=True)
+                with gr.Row():
+                    loras = ["None"] + [f[8:] for f in glob.glob("./loras/*")]
+                    lora_path = gr.Dropdown(loras, value="None", label="LoRA", interactive=True, scale=1)
+                    lora_scale = gr.Slider(minimum=0.0, maximum=1.0, value=1.0, step=0.01, precision=2, label="LoRA Scale", scale=2, interactive=True)
+
                 system_prompt = gr.Textbox(label="System prompt", value="Convert the text to speech:", lines=2, max_lines=3, scale=3, interactive=True)
 
             '''
@@ -107,6 +112,8 @@ with gr.Blocks() as server:
             top_p:float, 
             temperature:float, 
             repeat_penalty:float, 
+            lora_path:str,
+            lora_scale:float,
             output_folder_name:str, 
             caption_input:str,
             emotion_input:str,
@@ -132,7 +139,8 @@ with gr.Blocks() as server:
             'notes': notes_input,
             'caption': caption_input
         }) if caption_input else ""
-        return app.t2speech(t2s_text, system_prompt, system_text, max_tokens, top_k, top_p, temperature, repeat_penalty, output_folder_name, user_audio, normalize_caption(transcript_text))
+        lora_path = f"./loras/{lora_path}"
+        return app.t2speech(t2s_text, system_prompt, system_text, max_tokens, top_k, top_p, temperature, repeat_penalty, lora_path, lora_scale, output_folder_name, user_audio, normalize_caption(transcript_text))
     gen_button.click(fn=t2s_gen, inputs=[
         t2s_text, 
         system_prompt, 
@@ -141,6 +149,8 @@ with gr.Blocks() as server:
         top_p_slider, 
         temperature_slider, 
         repeat_penalty_slider, 
+        lora_path,
+        lora_scale,
         output_folder, 
         caption_input,
         emotion_input,
