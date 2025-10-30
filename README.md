@@ -126,6 +126,18 @@ LoRA の作成方法は以下のリポジトリを参照してください。
 - [LLASA-Trainer](https://github.com/laksjdjf/llasa-trainer)
 - [zhenye234/LLaSA_training](https://github.com/zhenye234/LLaSA_training/tree/main)
 
+## 注意
+
+上記のリポジトリで作成される LoRA はおそらく llama_cpp 互換性がないので、llama.cpp の convert_lora_to_gguf.py で llama_cpp 互換ファイルに変換する必要がある。
+
+Windows での llama.cpp のビルド方法は [Windows で llama.cpp のビルド](https://dskjal.com/deeplearning/build-llama-cpp.html) を参照。
+
+コマンド例
+
+> python convert-lora-to-gguf.py \\  
+> &emsp;&emsp;--base-model NandemoGHS/Anime-Llasa-3B-Captions \\  
+> &emsp;&emsp;--lora-dir ./my_lora_adapter \\  
+> &emsp;&emsp;--outfile ./lora_adapter.safetensors
 
 # SageAttention
 
