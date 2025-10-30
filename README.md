@@ -128,7 +128,7 @@ LoRA の作成方法は以下のリポジトリを参照してください。
 
 ## 注意
 
-上記のリポジトリで作成される LoRA はおそらく llama_cpp 互換性がないので、llama.cpp の convert_lora_to_gguf.py で llama_cpp 互換ファイルに変換する必要がある。
+上記のリポジトリで作成される LoRA は llama_cpp と互換性がないので、llama.cpp の convert_lora_to_gguf.py で llama_cpp 互換ファイルに変換する必要がある。
 
 Windows での llama.cpp のビルド方法は [Windows で llama.cpp のビルド](https://dskjal.com/deeplearning/build-llama-cpp.html) を参照。
 
