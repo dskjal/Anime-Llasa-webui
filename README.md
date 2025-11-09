@@ -28,6 +28,16 @@ Anime-Llasa-webui ディレクトリで
 
 **初回起動時は XCodec2 のダウンロードがあるので遅い。**
 
+# アンインストール
+
+%userprofile%\.cache\huggingface\hub\ の以下のキャッシュフォルダを削除する。
+- models--litagin--anime-whisper
+- models--ku-nlp--deberta-v3-base-japanese
+- models--facebook--w2v-bert-2.0
+- models--NandemoGHS--Anime-Llasa-3B
+- models--NandemoGHS--Anime-XCodec2-44.1kHz
+- models--openai--whisper-large-v3-turbo
+
 # 使い方
 
 **よく生成に失敗します。何度か生成してみてください**。
