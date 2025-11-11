@@ -30,7 +30,7 @@ Anime-Llasa-webui ディレクトリで
 
 # アンインストール
 
-%userprofile%\.cache\huggingface\hub\ の以下のキャッシュフォルダを削除する。
+%userprofile%/.cache/huggingface/hub/ の以下のキャッシュフォルダを削除する。
 - models--litagin--anime-whisper
 - models--ku-nlp--deberta-v3-base-japanese
 - models--facebook--w2v-bert-2.0
