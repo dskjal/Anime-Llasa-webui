@@ -26,7 +26,7 @@ Anime-Llasa-webui ディレクトリで
 > ./venv/Scripts/activate  
 > python ./run.py
 
-**初回起動時は XCodec2（3.2GB）と models--facebook--w2v-bert-2.0（2.3GB）のダウンロードがあるので遅い。**
+**初回起動時は XCodec2（3.3GB）と models--facebook--w2v-bert-2.0（2.3GB）のダウンロードがあるので遅い。**
 
 # アンインストール
 
