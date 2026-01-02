@@ -1,13 +1,13 @@
---extra-index-url  https://download.pytorch.org/whl/cu124
---extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu124
+--extra-index-url  https://download.pytorch.org/whl/cu128
+#--extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu128
 # xcodec2==0.1.5
 soundfile==0.13.1
 librosa==0.11.0
 gradio==5.48.0
 transformers==4.48.0
-llama-cpp-python==0.3.4
-torch==2.5.0+cu124
-torchaudio==2.5.0+cu124
+#llama-cpp-python==0.3.4
+torch==2.7.0+cu128
+torchaudio==2.7.0+cu128
 
 # latest torchao uses torch.int1, but torch.int1 requires torch>=2.6.0
 torchao==0.7.0
