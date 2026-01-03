@@ -1,7 +1,7 @@
 # Anime-Llasa-webui
 VRAM 8 GB で Anime Llasa 3B Captions を動作させる webui。Anime-XCodec2-44.1kHz を fp16 で動作させているので、VRAM 8 GB で Anime Llasa Captions Q8_0 が使用できる。
 
-cu128 にライブラリをアップデートしたため、RTX5000番台でも動作する可能性がある（未検証）。
+
 
 ![](https://github.com/dskjal/Anime-Llasa-webui/blob/main/images/ui.png)
 
