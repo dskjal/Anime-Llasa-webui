@@ -19,7 +19,7 @@ VRAM 8 GB で Anime Llasa 3B Captions を動作させる webui。Anime-XCodec2-4
 > py -3.12 -m venv venv  
 > ./venv/Scripts/activate  
 > pip install -r requirements.txt  
-> pip install https://github.com/JamePeng/llama-cpp-python/releases/download/v0.3.16-cu124-Basic-win-20251119/llama_cpp_python-0.3.16-cp312-cp312-win_amd64.whl
+> pip install https://github.com/JamePeng/llama-cpp-python/releases/download/v0.3.16-cu128-Basic-win-20251119/llama_cpp_python-0.3.16-cp312-cp312-win_amd64.whl
 
 
 Anime-Llasa-webui/models に [Anime-Llasa-3B-Captions.Q8_0.gguf](https://huggingface.co/dskjal/Anime-Llasa-3B-Captions-GGUF/blob/main/Anime-Llasa-3B-Captions.Q8_0.gguf) を配置。
