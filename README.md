@@ -152,6 +152,10 @@ Windows での llama.cpp のビルド方法は [Windows で llama.cpp のビル�
 > &emsp;&emsp;--lora-dir ./my_lora_adapter \\  
 > &emsp;&emsp;--outfile ./lora_adapter.safetensors
 
+# バッチ生成
+
+llama_cpp がバッチ処理に対応していない。詳細は [Add batched inference #771](https://github.com/abetlen/llama-cpp-python/issues/771) を参照。
+
 # SageAttention
 
 [F.scaled_dot_product_attention = sageattn のような単純なパッチでは、精度が大きく低下すると報告されている](https://github.com/thu-ml/SageAttention/issues/55)。Llama 3.2 は Grouped-Query Attention を採用しており、SageAttention が GQA に非対応のため。
